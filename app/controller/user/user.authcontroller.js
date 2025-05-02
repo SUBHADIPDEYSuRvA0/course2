@@ -54,25 +54,25 @@ class UserController {
   // ✅ Step 2: Verify OTP & Complete Signup
   signup = async (req, res) => {
     try {
-      const { name, email, password, otp, referralCode,phone } = req.body;
+      const { name, email, password, otp, referralCode,phone,role } = req.body;
   
       if (!name || !email || !password || !otp || !phone) {
-        req.session.message = 'All fields are required';
-        res.redirect("/login")
+        
+        res.json("All fields are required")
 
        
       }
   
       const existingOtp = await Otp.findOne({ email, otp });
       if (!existingOtp) {
-        req.session.message = 'Invalid or expired OTP';
-        res.redirect("/login")
+        req.json('Invalid or expired OTP')
+        
       }
   
       const userExists = await User.findOne({ email });
       if (userExists) {
-        req.session.message = 'Email already registered Please login';
-        res.redirect("/login")
+        req.json('Email already registered Please login')
+        
       }
   
       const myReferralCode = await this.generateUniqueReferralCode();
@@ -82,8 +82,8 @@ class UserController {
       if (referralCode) {
         referredByUser = await User.findOne({ myReferralCode: referralCode });
         if (!referredByUser) {
-          req.session.message = 'Invalid referral code';
-          res.redirect("/login")
+          res.json('Invalid referral code')
+          
         }
         referredByCode = referralCode;
       }
@@ -96,9 +96,10 @@ class UserController {
         phone,
         password: hashedPassword,
         myReferralCode,
+        role,
         refferby: referredByCode,
       });
-  
+    
       await newUser.save();
   
       const setrefferalbonusbonus = await refferal.findOne({});
@@ -109,7 +110,7 @@ class UserController {
   
       await Otp.deleteMany({ email });
   
-      req.session.message = 'Signup successful  please login'; // Set success message in session
+      res.json('Signup successful  please login') // Set success message in session
   
      res.json({ success: true, message: 'Signup successful' });
     } catch (error) {
@@ -123,19 +124,19 @@ class UserController {
       const { email, password } = req.body;
   
       if (!email || !password) {
-        req.session.message = 'Email and password are required';
+        res.json('Email and password are required')
         // return res.status(400).json({ message: req.session.message });
       }
   
       const user = await User.findOne({ email });
       if (!user) {
-        req.session.message = 'User not found';
+        res.json('User not found')
         // return res.status(404).json({ message: req.session.message });
       }
   
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        req.session.message = 'Invalid password';
+        res.json('Invalid password')
         // return res.status(401).json({ message: req.session.message });
       }
   
@@ -154,7 +155,7 @@ class UserController {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
   
-      req.session.message = 'Login successful';
+      res.json('Login successful')
 
 
 
@@ -172,14 +173,14 @@ class UserController {
       });
     } catch (error) {
       // console.error('Login Error:', error);
-      req.session.message = 'Server error';
+      res.json('Server error')
       res.status(500).json({ message: req.session.message });
     }
   };
   
   logout = (req, res) => {
     res.clearCookie('token');
-    req.session.message = 'logout successful please login';
+    res.json('logout successful please login')
     
 
     res.status(200).json({ message: 'Logged out successfully please login' });
