@@ -17,7 +17,7 @@ class contactcontroller{
 
 
 
-        res.json({success:true,message:"Thank you for your contacting Us."})
+        res.redirect("#")
     }
 }
 
