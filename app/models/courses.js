@@ -8,7 +8,7 @@ const courseSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
+     
     },
     features: [{
         type: String,
@@ -24,7 +24,7 @@ const courseSchema = new mongoose.Schema({
     },
     discount: {
         type: Number,
-        required: true,
+       
     },
    cgst: {
        type: Number,
