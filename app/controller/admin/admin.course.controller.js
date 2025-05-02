@@ -30,7 +30,7 @@ class CourseController {
       });
 
       await course.save();
-      res.josn("submit);
+      res.josn("submit");
     } catch (error) {
       console.error("Error creating course:", error);
      
