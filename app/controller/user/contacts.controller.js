@@ -17,7 +17,7 @@ class contactcontroller{
 
 
 
-        res.redirect("#")
+        res.redirect("https://digitalcors.netlify.app/contact")
     }
 }
 
