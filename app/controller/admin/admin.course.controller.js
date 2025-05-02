@@ -12,9 +12,6 @@ class CourseController {
         features,
         price,
         discount,
-        cgst,
-        sgst,
-        igst,
         validated,
       
       } = req.body;
@@ -28,9 +25,6 @@ class CourseController {
         image,
         price,
         discount,
-        cgst,
-        sgst,
-        igst,
         validated,
         
       });
