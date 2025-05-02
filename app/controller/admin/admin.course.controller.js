@@ -30,7 +30,7 @@ class CourseController {
       });
 
       await course.save();
-      res.redirect("/admin/courses");
+      res.josn("submit);
     } catch (error) {
       console.error("Error creating course:", error);
       res.redirect("/admin/courses");
