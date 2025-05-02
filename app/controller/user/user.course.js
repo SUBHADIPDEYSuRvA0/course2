@@ -1,9 +1,8 @@
 const Course = require("../../models/courses");
+const CourseDocument = require("../../models/coursedocuments");
 const fs = require("fs");
-const path = require("path");
 
 class CourseController {
-  // Create a new course
   async createCourse(req, res) {
     try {
       if (!req.user || req.user.role !== "teacher") {
@@ -16,104 +15,48 @@ class CourseController {
         features,
         price,
         discount,
-        cgst,
-        sgst,
-        igst,
         validated,
+        notes,
+        videos,
+        assignments
       } = req.body;
+
+      const parsedFeatures = Array.isArray(features) ? features : [features];
+      const parsedNotes = Array.isArray(notes) ? notes : [notes];
+      const parsedVideos = Array.isArray(videos) ? videos : [videos];
+      const parsedAssignments = assignments ? JSON.parse(assignments) : [];
 
       const image = req.file ? req.file.path : null;
 
       const course = new Course({
         title,
         description,
-        features: Array.isArray(features) ? features : [features],
+        features: parsedFeatures,
         image,
         price,
         discount,
-        cgst,
-        sgst,
-        igst,
         validated,
       });
 
-      await course.save();
-      res.status(201).json({ message: "Course created successfully", course });
+      const savedCourse = await course.save();
+
+      const courseDocument = new CourseDocument({
+        courseId: savedCourse._id,
+        notes: parsedNotes,
+        videos: parsedVideos,
+        assignments: parsedAssignments,
+      });
+
+      await courseDocument.save();
+
+      res.status(201).json({
+        message: "Course and course documents created successfully",
+        course: savedCourse,
+        courseDocument,
+      });
     } catch (error) {
       console.error("Error creating course:", error);
       res.status(500).json({ error: "Failed to create course" });
-    }
-  }
-
-  // Update a course by ID
-  async updateCourse(req, res) {
-    try {
-      if (!req.user || req.user.role !== "teacher") {
-        return res.status(403).json({ error: "Access denied: Only teachers can update courses" });
-      }
-
-      const { id } = req.params;
-      const {
-        title,
-        description,
-        features,
-        price,
-        discount,
-        cgst,
-        sgst,
-        igst,
-        validated,
-      } = req.body;
-
-      const course = await Course.findById(id);
-      if (!course) return res.status(404).json({ error: "Course not found" });
-
-      const image = req.file ? req.file.path : null;
-      if (image) {
-        if (course.image && fs.existsSync(course.image)) {
-          fs.unlinkSync(course.image);
-        }
-        course.image = image;
-      }
-
-      course.title = title;
-      course.description = description;
-      course.price = price;
-      course.discount = discount;
-      course.cgst = cgst;
-      course.sgst = sgst;
-      course.igst = igst;
-      course.validated = validated;
-      course.features = Array.isArray(features) ? features : [features];
-
-      await course.save();
-      res.json({ message: "Course updated successfully", course });
-    } catch (error) {
-      console.error("Error updating course:", error);
-      res.status(500).json({ error: "Failed to update course" });
-    }
-  }
-
-  // Delete a course by ID
-  async deleteCourse(req, res) {
-    try {
-      if (!req.user || req.user.role !== "teacher") {
-        return res.status(403).json({ error: "Access denied: Only teachers can delete courses" });
-      }
-
-      const { id } = req.params;
-      const course = await Course.findById(id);
-      if (!course) return res.status(404).json({ error: "Course not found" });
-
-      if (course.image && fs.existsSync(course.image)) {
-        fs.unlinkSync(course.image);
-      }
-
-      await Course.findByIdAndDelete(id);
-      res.json({ message: "Course deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting course:", error);
-      res.status(500).json({ error: "Failed to delete course" });
     }
   }
 }
