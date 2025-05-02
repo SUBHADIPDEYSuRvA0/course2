@@ -12,7 +12,7 @@ const courseSchema = new mongoose.Schema({
     },
     features: [{
         type: String,
-        required: true,
+      
     }],
     image: {
         type: String,
@@ -28,15 +28,15 @@ const courseSchema = new mongoose.Schema({
     },
    cgst: {
        type: Number,
-       required: true
+     
    },
    sgst: {
        type: Number,
-       required: true
+   
    }
    ,igst: {
        type: Number,
-       required: true
+ 
    },
     validated: {
        type:String,
