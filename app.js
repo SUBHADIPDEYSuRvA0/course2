@@ -47,7 +47,7 @@ app.use("/uploads", express.static("uploads"));
 
 
 // Routesuser
-app.use("/", require("./app/routes/user/index"));
+app.use("/api", require("./app/routes/user/index"));
 
 // admin routes
 app.use("/", require("./app/routes/admin/index"));
