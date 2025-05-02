@@ -30,7 +30,8 @@ class CourseController {
       });
 
       await course.save();
-      res.json({"submit"});
+     res.json({ submit: true }); // or any meaningful value
+
     } catch (error) {
       console.error("Error creating course:", error);
      
