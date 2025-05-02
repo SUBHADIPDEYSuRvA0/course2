@@ -33,7 +33,7 @@ class CourseController {
       res.josn("submit);
     } catch (error) {
       console.error("Error creating course:", error);
-      res.redirect("/admin/courses");
+     
     }
   }
 
