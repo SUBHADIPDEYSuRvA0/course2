@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const ejs = require("ejs");
 const session = require("express-session");
 const path = require("path");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
 const connectDB = require("./app/config/DB0000");
@@ -17,7 +18,11 @@ connectDB();
 
 
 
-;
+app.use(cors({
+  origin: ["http://localhost:3000", "https://digitalcors.netlify.app"],
+  credentials: true
+}));
+
 
 app.use(session({
   secret: 'educate-mysecretkey', // use a strong secret in production
